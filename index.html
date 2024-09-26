@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload Example</title>
+    <link href="./style.css" rel="stylesheet">
+</head>
+<body>
+    <button class="input-button">
+    <label for="fileInput">choose file</label>
+    <p id="fileNameDisplay"></p>
+    <input type="file" id="fileInput" accept=".txt, .pdf, .doc, .docx"> <!-- Specify the file types you want to accept -->
+    </button>
+    <button class="upload-button" onclick="uploadFile()">Upload File</button>
+    <div id="response"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var fileInput = document.getElementById('fileInput');
+            var fileNameDisplay = document.getElementById('fileNameDisplay');
+
+            fileInput.addEventListener('change', function() {
+                var fileName = '';
+                if (this.files && this.files.length > 0) {
+                    fileName = this.files[0].name;
+                }
+                fileNameDisplay.textContent = 'Selected file: ' + fileName;
+            });
+    });
+        function uploadFile() {
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0]; // Get the selected file     
+            var formData = new FormData();
+            formData.append('file', file);
+
+            fetch('http://localhost:5000/api/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                var responseDiv = document.getElementById('response');
+                responseDiv.innerHTML = '<p>' + data.text + '</p>';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
